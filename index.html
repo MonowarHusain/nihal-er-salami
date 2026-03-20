@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>মনোয়ারের ঈদ সালামি</title>
+    <style>
+        /* Importing Bengali Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600&family=Noto+Serif+Bengali:wght@600;700&display=swap');
+
+        /* Basic Body Reset and Flexbox Setup */
+        body {
+            background-color: #fdfbf7;
+            margin: 0;
+            font-family: 'Hind Siliguri', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            /* Allows scrolling on smaller screens */
+            overflow-x: hidden;
+            overflow-y: auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Header Styling */
+        h1 {
+            font-family: 'Noto Serif Bengali', serif;
+            color: #064e3b;
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+            margin-top: auto;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 span {
+            color: #d4af37;
+        }
+
+        p.subtitle {
+            color: #555;
+            margin-top: 0;
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* Spinner Container */
+        .spinner-container {
+            position: relative;
+            width: 320px;
+            height: 320px;
+        }
+
+        /* The Golden Pointer */
+        .pointer {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 40px solid #d4af37;
+            filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.4));
+        }
+
+        /* The Wheel Physics & Borders */
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 8px solid #d4af37;
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+            /* This transition creates the realistic spinning slow-down effect */
+            transition: transform 4s cubic-bezier(0.25, 0.1, 0.25, 1);
+            box-shadow: 0 10px 30px rgba(6, 78, 59, 0.3);
+        }
+
+        /* Drawing the 5 alternating colored slices */
+        .wheel-bg {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(from -36deg,
+                    #064e3b 0 72deg,
+                    #047857 72deg 144deg,
+                    #064e3b 144deg 216deg,
+                    #047857 216deg 288deg,
+                    #115e59 288deg 360deg);
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* Positioning the text inside the slices */
+        .labels {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        .label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: 0 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #fdfbf7;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Spacing out the 5 options perfectly (360 / 5 = 72 degrees) */
+        .label:nth-child(1) {
+            transform: rotate(0deg) translate(-50%, -120px);
+        }
+
+        .label:nth-child(2) {
+            transform: rotate(72deg) translate(-50%, -120px);
+        }
+
+        .label:nth-child(3) {
+            transform: rotate(144deg) translate(-50%, -120px);
+        }
+
+        .label:nth-child(4) {
+            transform: rotate(216deg) translate(-50%, -120px);
+        }
+
+        .label:nth-child(5) {
+            transform: rotate(288deg) translate(-50%, -120px);
+        }
+
+        /* The golden center dot */
+        .center-dot {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle, #d4af37, #b5952f);
+            border-radius: 50%;
+            z-index: 5;
+            border: 4px solid #fdfbf7;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Button Styling */
+        .btn {
+            margin-top: 50px;
+            padding: 15px 45px;
+            font-size: 1.3rem;
+            font-family: 'Noto Serif Bengali', serif;
+            font-weight: 700;
+            color: #064e3b;
+            background: linear-gradient(135deg, #fdfbf7, #eadeba);
+            border: 3px solid #d4af37;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 10px rgba(212, 175, 55, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Footer Styling */
+        .footer {
+            margin-top: auto;
+            padding-top: 30px;
+            font-size: 0.9rem;
+            color: #666;
+            text-align: center;
+        }
+
+        .footer a {
+            color: #d4af37;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.2s;
+        }
+
+        .footer a:hover {
+            color: #064e3b;
+            text-decoration: underline;
+        }
+
+        /* Pop-up Modal Styling */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(6, 78, 59, 0.85);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.5s;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .modal-content {
+            background: #fdfbf7;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            border: 4px solid #d4af37;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            transform: scale(0.8);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-sizing: border-box;
+        }
+
+        .modal-content h2 {
+            font-family: 'Noto Serif Bengali', serif;
+            color: #064e3b;
+            margin-top: 0;
+            font-size: 2.2rem;
+        }
+
+        .modal-content p {
+            font-size: 1.1rem;
+            color: #333;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .close-btn {
+            padding: 12px 25px;
+            background: #064e3b;
+            color: #fdfbf7;
+            border: 2px solid #064e3b;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: 'Hind Siliguri', sans-serif;
+            transition: all 0.2s;
+        }
+
+        .close-btn:hover {
+            background: #fdfbf7;
+            color: #064e3b;
+        }
+
+        /* --- MOBILE RESPONSIVE FIXES --- */
+        @media (max-width: 400px),
+        (max-height: 750px) {
+            h1 {
+                font-size: 2rem;
+                margin-top: 20px;
+            }
+
+            p.subtitle {
+                font-size: 1rem;
+                margin-bottom: 20px;
+            }
+
+            /* Scales down the wheel on small devices to prevent overflow */
+            .spinner-container {
+                transform: scale(0.85);
+                margin: -20px 0;
+            }
+
+            .btn {
+                margin-top: 20px;
+                font-size: 1.1rem;
+                padding: 12px 30px;
+            }
+
+            .modal-content {
+                padding: 30px 20px;
+            }
+
+            .modal-content h2 {
+                font-size: 1.8rem;
+            }
+
+            .modal-content p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>মনোয়ারের <span>সালামি</span></h1>
+    <p class="subtitle">দেখি আপনার কপালে কী জোটে!</p>
+
+    <div class="spinner-container">
+        <div class="pointer"></div>
+        <div class="wheel" id="wheel">
+            <div class="wheel-bg"></div>
+            <div class="labels">
+                <div class="label">দোয়া 🤲</div>
+                <div class="label">১০ টাকা</div>
+                <div class="label">৫০ টাকা</div>
+                <div class="label">১০০ টাকা</div>
+                <div class="label">২০০ টাকা</div>
+            </div>
+            <div class="center-dot"></div>
+        </div>
+    </div>
+
+    <button class="btn" id="spinBtn">সালামির জন্য ঘুরান</button>
+
+    <div class="footer">
+        © ২০২৬ <a href="https://monowar.me/" target="_blank">মনোয়ার হুসাইন</a>। সর্বস্বত্ব সংরক্ষিত।
+    </div>
+
+    <div class="modal-overlay" id="modal">
+        <div class="modal-content">
+            <h2>ঈদ মোবারক! ✨</h2>
+            <p id="modal-message"></p>
+            <button class="close-btn" onclick="closeModal()"></button>
+        </div>
+    </div>
+
+    <audio id="bgMusic" src="music.mp3" loop></audio>
+
+    <script>
+
+        // Disable Right-Click
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
+        // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+        document.onkeydown = function (e) {
+            if (e.keyCode == 123 ||
+                (e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0) || e.keyCode == 'J'.charCodeAt(0))) ||
+                (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0))) {
+                return false;
+            }
+        };
+        // Retrieve spin count from local storage (to keep track of rotations)
+        let spinCount = parseInt(localStorage.getItem('salamiSpinCount')) || 0;
+        let isMusicPlaying = false;
+
+        // DOM Elements
+        const wheel = document.getElementById('wheel');
+        const spinBtn = document.getElementById('spinBtn');
+        const modal = document.getElementById('modal');
+        const bgMusic = document.getElementById('bgMusic');
+
+        // Selectors for dynamically changing modal text
+        const modalText = document.getElementById('modal-message');
+        const closeBtn = modal.querySelector('.close-btn');
+
+        spinBtn.addEventListener('click', () => {
+            // Prevent multiple clicks while spinning
+            spinBtn.disabled = true;
+
+            // Increment spin count for rotation math
+            spinCount++;
+            localStorage.setItem('salamiSpinCount', spinCount);
+
+            // Start playing background music
+            if (!isMusicPlaying) {
+                bgMusic.volume = 0.3; // 30% mild volume
+                bgMusic.play().catch(error => console.log("Audio play failed:", error));
+                isMusicPlaying = true;
+            }
+
+            // Default: Landing on "Dua" (0 degrees)
+            let targetDegree = 0;
+            let resultMessage = "কাগজের টাকা তো আজ আছে কাল ফুরিয়ে যাবে, কিন্তু মন থেকে করা দোয়ার কোনো শেষ নেই! তাই এই ঈদে কোনো অঙ্কের সালামির বদলে আপনার জন্য রইলো আমার সবচেয়ে দামি উপহার— <strong>একবুক খাঁটি দোয়া।</strong> 💫<br><br><em>মহান আল্লাহ আপনার জীবনের সব কষ্ট দূর করে দিন, আপনার মনের সব সুন্দর ইচ্ছেগুলো পূরণ করুন এবং আপনাকে সবসময় সুস্থ ও হাসিখুশি রাখুন।</em>";
+            let btnText = "ভালোবাসা ও দোয়া গ্রহণ করুন";
+
+            // --- THE RANDOM CHANCE LOGIC ---
+            // 0.01 = 1% chance. 
+            // 0.05 = 5% chance. 
+            // 0.10 = 10% chance.
+            if (Math.random() < 0.01) {
+                targetDegree = 288; // Lands on 10 TK
+                resultMessage = "আরেহ! অসম্ভব ঘটনা ঘটে গেছে! আপনি জিতে গেছেন নগদ <strong>১০ টাকা</strong>! 🎉<br><br><em>তাড়াতাড়ি স্ক্রিনশট নিয়ে মনোয়ারকে পাঠান সালামি বুঝে পেতে!</em>";
+                btnText = "টাকা দাবি করুন";
+            }
+
+            // Randomized math offset for realism
+            const randomOffset = Math.floor(Math.random() * 41) - 20;
+            const baseSpins = spinCount * 1800;
+            const currentRotation = baseSpins + targetDegree + randomOffset;
+
+            // Spin the wheel
+            wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+            // Show result after 4 seconds
+            setTimeout(() => {
+                modalText.innerHTML = resultMessage;
+                closeBtn.innerText = btnText;
+                modal.classList.add('active');
+                spinBtn.disabled = false;
+            }, 4000);
+        });
+
+        // Function to close modal and stop music
+        function closeModal() {
+            modal.classList.remove('active');
+            bgMusic.pause();
+            bgMusic.currentTime = 0;
+            isMusicPlaying = false;
+        }
+    </script>
+</body>
+
+</html>
